@@ -5,8 +5,10 @@ import {
   Select,
   Card,
   CardContent,
+  Typography,
 } from '@material-ui/core';
 import './App.css';
+import 'leaflet/dist/leaflet.css';
 import covidAPI from './api';
 import SummaryBox from './components/summaryBox/SummaryBox';
 import Map from './components/map/Map';
@@ -18,14 +20,17 @@ import { sortCountriesByCases } from './utils/sort';
 const App = () => {
   const [countryOptions, setCountryOptions] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('worldwide');
-  const [countryData, setCountryData] = useState(null);
+  const [selectedCountryData, setSelectedCountryData] = useState(null);
   const [tableData, setTableData] = useState([]);
+  const DEFAULT_CENTER = [34.807, -40.4796];
+  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  const [mapZoom, setMapZoom] = useState(2);
 
   useEffect(() => {
     // Get worldwide data (default setting)
     const getWorldwideData = async () => {
       const { data } = await covidAPI.getWorldwideData();
-      setCountryData(data);
+      setSelectedCountryData(data);
     };
     getWorldwideData();
     // Obtain list of countries for Dropdown
@@ -49,16 +54,20 @@ const App = () => {
     let res;
     if (countryCode === 'worldwide') {
       res = await covidAPI.getWorldwideData();
+      setMapCenter(DEFAULT_CENTER);
+      setMapZoom(2);
     } else {
       res = await covidAPI.getCountryData(countryCode);
+      setMapCenter([res.data.countryInfo.lat, res.data.countryInfo.long]);
+      setMapZoom(4);
     }
-    setCountryData(res.data);
+    setSelectedCountryData(res.data);
   };
   return (
     <div className='app'>
       <div className='app__left'>
         <div className='app__header'>
-          <h1>Covid 19 Statistics</h1>
+          <Typography variant='h5'>Covid-19 Current Statistics</Typography>
           <div className='app__dropdown'>
             <FormControl>
               <Select value={selectedCountry} onChange={onCountryChange}>
@@ -75,26 +84,26 @@ const App = () => {
         <div className='app__stats'>
           <SummaryBox
             title='Covid Cases'
-            totalStat={countryData?.cases}
-            todayStat={countryData?.todayCases}
+            totalStat={selectedCountryData?.cases}
+            todayStat={selectedCountryData?.todayCases}
           ></SummaryBox>
           <SummaryBox
             title='Recovered'
-            totalStat={countryData?.recovered}
-            todayStat={countryData?.todayRecovered}
+            totalStat={selectedCountryData?.recovered}
+            todayStat={selectedCountryData?.todayRecovered}
           ></SummaryBox>
           <SummaryBox
             title='Deaths'
-            totalStat={countryData?.deaths}
-            todayStat={countryData?.todayDeaths}
+            totalStat={selectedCountryData?.deaths}
+            todayStat={selectedCountryData?.todayDeaths}
           ></SummaryBox>
         </div>
 
-        <Map />
+        <Map center={mapCenter} zoom={mapZoom} mapData={tableData} />
       </div>
       <div className='app__right'>
         <Card>
-          <CardContent>
+          <CardContent className='app__right-content'>
             <DataTable tableData={tableData} />
             <h2>Worldwide New Cases</h2>
             <LineGraph />

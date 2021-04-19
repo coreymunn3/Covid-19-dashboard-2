@@ -11,9 +11,16 @@ body {
   .app {
     flex-direction: column;
   }
+  .app__left {
+    flex: 1;
+  }
 }
 .app__left {
   flex: 0.75;
+}
+.app__right-content {
+  display: flex;
+  flex-direction: column;
 }
 
 .app__header {
