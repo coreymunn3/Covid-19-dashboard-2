@@ -1,0 +1,9 @@
+.table {
+  margin-top: 1rem;
+  overflow: scroll;
+  height: 400px;
+}
+
+.table tbody tr:nth-of-type(odd) {
+  background-color: #f3f2f8;
+}

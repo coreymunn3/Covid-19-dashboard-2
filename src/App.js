@@ -10,11 +10,16 @@ import './App.css';
 import covidAPI from './api';
 import SummaryBox from './components/summaryBox/SummaryBox';
 import Map from './components/map/Map';
+import DataTable from './components/dataTable/DataTable';
+import LineGraph from './components/lineGraph/LineGraph';
+// util fn
+import { sortCountriesByCases } from './utils/sort';
 
 const App = () => {
   const [countryOptions, setCountryOptions] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('worldwide');
   const [countryData, setCountryData] = useState(null);
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     // Get worldwide data (default setting)
@@ -26,11 +31,13 @@ const App = () => {
     // Obtain list of countries for Dropdown
     const getCountries = async () => {
       const { data } = await covidAPI.getCountries();
+      // console.log(sortCountriesByCases(data));
       const countryArray = data.map((country) => ({
         name: country.country,
         abbrev: country.countryInfo.iso2,
       }));
       setCountryOptions(countryArray);
+      setTableData(sortCountriesByCases(data));
     };
     getCountries();
   }, []);
@@ -88,8 +95,9 @@ const App = () => {
       <div className='app__right'>
         <Card>
           <CardContent>
-            <h2>Live Cases by Country</h2>
+            <DataTable tableData={tableData} />
             <h2>Worldwide New Cases</h2>
+            <LineGraph />
           </CardContent>
         </Card>
       </div>
