@@ -1,23 +1,23 @@
 import React from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import {
   MapContainer,
   TileLayer,
-  LayersControl,
   LayerGroup,
   useMap,
   Circle,
+  Popup,
 } from 'react-leaflet';
-import caseTypeMetadata from './caseTypeMetadata';
+import caseTypeMetadata from '../../utils/caseTypeMetadata';
+import numeral from 'numeral';
 import './Map.css';
 
 const UpdateView = ({ center, zoom }) => {
   const map = useMap();
   map.setView(center, zoom);
-  console.log(map.getCenter());
   return null;
 };
-const Map = ({ center, zoom, mapData, measure = 'cases' }) => {
+const Map = ({ center, zoom, mapData, activeMeasure }) => {
   return (
     <Paper className='map'>
       <MapContainer center={center} zoom={zoom} scrollWheelZoom={false}>
@@ -32,14 +32,39 @@ const Map = ({ center, zoom, mapData, measure = 'cases' }) => {
               key={country.country}
               center={[country.countryInfo.lat, country.countryInfo.long]}
               pathOptions={{
-                color: caseTypeMetadata[measure].hex,
-                fillColor: caseTypeMetadata[measure].hex,
+                color: caseTypeMetadata[activeMeasure].hex,
+                fillColor: caseTypeMetadata[activeMeasure].hex,
               }}
               fillOpacity={0.4}
               radius={Math.sqrt(
-                country[measure] * caseTypeMetadata[measure].multiplier
+                country[activeMeasure] *
+                  caseTypeMetadata[activeMeasure].multiplier
               )}
-            ></Circle>
+            >
+              <Popup>
+                <div className='tooltipContainer'>
+                  <div
+                    style={{
+                      backgroundImage: `url(${country.countryInfo.flag})`,
+                    }}
+                    className='tooltipFlag'
+                  ></div>
+                  <Typography variant='h6'>{country.country}</Typography>
+                  <Typography variant='body1' className='tooltipDetail'>
+                    {'Cases: '}
+                    {numeral(country.cases).format('0,0')}
+                  </Typography>
+                  <Typography variant='body1' className='tooltipDetail'>
+                    {'Recovered: '}
+                    {numeral(country.recovered).format('0,0')}
+                  </Typography>
+                  <Typography variant='body1' className='tooltipDetail'>
+                    {'Deaths: '}
+                    {numeral(country.deaths).format('0,0')}
+                  </Typography>
+                </div>
+              </Popup>
+            </Circle>
           ))}
         </LayerGroup>
       </MapContainer>

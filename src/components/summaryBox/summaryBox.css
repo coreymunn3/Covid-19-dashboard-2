@@ -1,0 +1,30 @@
+.summaryBox {
+  flex: 1;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+.summaryBox--selected {
+  border-bottom-width: 5px;
+  border-bottom-style: solid;
+}
+.summaryBox:not(:last-child) {
+  margin-right: 10px;
+}
+.summaryBox__title {
+  color: lightgray;
+}
+.summaryBox__cases {
+  color: var(--cases-color);
+  border-color: var(--cases-color);
+}
+.summaryBox__recovered {
+  color: var(--recovered-color);
+  border-color: var(--recovered-color);
+}
+.summaryBox__deaths {
+  color: var(--deaths-color);
+  border-color: var(--deaths-color);
+}
+.summaryBox__total {
+  color: rgb(180, 180, 180);
+}

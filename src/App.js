@@ -3,8 +3,7 @@ import {
   FormControl,
   MenuItem,
   Select,
-  Card,
-  CardContent,
+  Paper,
   Typography,
 } from '@material-ui/core';
 import './App.css';
@@ -14,8 +13,6 @@ import SummaryBox from './components/summaryBox/SummaryBox';
 import Map from './components/map/Map';
 import DataTable from './components/dataTable/DataTable';
 import LineGraph from './components/lineGraph/LineGraph';
-// util fn
-import { sortCountriesByCases } from './utils/sort';
 
 const App = () => {
   const [countryOptions, setCountryOptions] = useState([]);
@@ -25,6 +22,7 @@ const App = () => {
   const DEFAULT_CENTER = [34.807, -40.4796];
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState(2);
+  const [activeMeasure, setActiveMeasure] = useState('cases');
 
   useEffect(() => {
     // Get worldwide data (default setting)
@@ -36,13 +34,13 @@ const App = () => {
     // Obtain list of countries for Dropdown
     const getCountries = async () => {
       const { data } = await covidAPI.getCountries();
-      // console.log(sortCountriesByCases(data));
+      // console.log(sortCountriesByMeasure(data));
       const countryArray = data.map((country) => ({
         name: country.country,
         abbrev: country.countryInfo.iso2,
       }));
       setCountryOptions(countryArray);
-      setTableData(sortCountriesByCases(data));
+      setTableData(data);
     };
     getCountries();
   }, []);
@@ -63,14 +61,22 @@ const App = () => {
     }
     setSelectedCountryData(res.data);
   };
+
   return (
     <div className='app'>
       <div className='app__left'>
         <div className='app__header'>
-          <Typography variant='h5'>Covid-19 Current Statistics</Typography>
+          <Typography variant='h4'>
+            <strong>Covid-19 Current Statistics</strong>
+          </Typography>
           <div className='app__dropdown'>
             <FormControl>
-              <Select value={selectedCountry} onChange={onCountryChange}>
+              <Select
+                value={selectedCountry}
+                variant='outlined'
+                style={{ backgroundColor: 'white' }}
+                onChange={onCountryChange}
+              >
                 <MenuItem value='worldwide'>WorldWide</MenuItem>
                 {countryOptions.map(({ name, abbrev }, idx) => (
                   <MenuItem key={idx} value={abbrev}>
@@ -83,32 +89,53 @@ const App = () => {
         </div>
         <div className='app__stats'>
           <SummaryBox
-            title='Covid Cases'
+            isActive={activeMeasure === 'cases'}
+            title='Cases'
             totalStat={selectedCountryData?.cases}
             todayStat={selectedCountryData?.todayCases}
+            onClick={() => setActiveMeasure('cases')}
           ></SummaryBox>
           <SummaryBox
+            isActive={activeMeasure === 'recovered'}
             title='Recovered'
             totalStat={selectedCountryData?.recovered}
             todayStat={selectedCountryData?.todayRecovered}
+            onClick={() => setActiveMeasure('recovered')}
           ></SummaryBox>
           <SummaryBox
+            isActive={activeMeasure === 'deaths'}
             title='Deaths'
             totalStat={selectedCountryData?.deaths}
             todayStat={selectedCountryData?.todayDeaths}
+            onClick={() => setActiveMeasure('deaths')}
           ></SummaryBox>
         </div>
 
-        <Map center={mapCenter} zoom={mapZoom} mapData={tableData} />
+        <Map
+          center={mapCenter}
+          zoom={mapZoom}
+          mapData={tableData}
+          activeMeasure={activeMeasure}
+        />
       </div>
       <div className='app__right'>
-        <Card>
-          <CardContent className='app__right-content'>
-            <DataTable tableData={tableData} />
-            <h2>Worldwide New Cases</h2>
-            <LineGraph />
-          </CardContent>
-        </Card>
+        <Paper
+          className='.app__right-content'
+          style={{ padding: '1rem', flexGrow: 1 }}
+        >
+          <Typography variant='h5' align='center'>
+            Cases By Country
+          </Typography>
+          <DataTable tableData={tableData} activeMeasure={activeMeasure} />
+          <Typography
+            variant='h5'
+            align='center'
+            style={{ marginTop: '1rem' }}
+          >{`Worldwide New ${activeMeasure}`}</Typography>
+          <div className='app__graph'>
+            <LineGraph activeMeasure={activeMeasure} />
+          </div>
+        </Paper>
       </div>
     </div>
   );

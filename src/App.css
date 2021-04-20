@@ -1,3 +1,9 @@
+:root {
+  --cases-color: #cc1034;
+  --recovered-color: #7dd71d;
+  --deaths-color: #303030;
+}
+
 body {
   background-color: #f6f6f6;
 }
@@ -7,20 +13,22 @@ body {
   flex-direction: row;
   justify-content: space-evenly;
 }
-@media screen and (max-width: 1000px) {
-  .app {
-    flex-direction: column;
-  }
-  .app__left {
-    flex: 1;
-  }
-}
 .app__left {
-  flex: 0.75;
+  margin: 0 2%;
+  width: 60%;
 }
+.app__right {
+  margin: 0 2%;
+  width: 30%;
+}
+
 .app__right-content {
   display: flex;
   flex-direction: column;
+}
+
+.app__graph {
+  height: 220px;
 }
 
 .app__header {
@@ -33,4 +41,18 @@ body {
 .app__stats {
   display: flex;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 1000px) {
+  .app {
+    flex-direction: column;
+  }
+  .app__left,
+  .app__right {
+    width: 100%;
+    margin: 0;
+  }
+  .app__stats {
+    flex-direction: column;
+  }
 }

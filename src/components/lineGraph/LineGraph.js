@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import covidAPI from '../../api';
 import { sortDates } from '../../utils/sort';
+import caseTypeMetadata from '../../utils/caseTypeMetadata';
 
-const LineGraph = () => {
+const LineGraph = ({ activeMeasure }) => {
+  const [rawHistoricalData, setRawHistoricalData] = useState(null);
   const [chartData, setChartData] = useState(null);
 
+  // creating an array of dat a points in [{x: data, y:data}] format from object with date keys
   const transformDataForLineChart = (data) => {
-    const dateKeys = Object.keys(data['cases']);
+    const dateKeys = Object.keys(data[activeMeasure]);
     const sortedDateKeys = sortDates(dateKeys);
     const chartData = [];
     let lastDataPoint;
@@ -15,21 +18,29 @@ const LineGraph = () => {
       if (lastDataPoint) {
         chartData.push({
           x: date,
-          y: lastDataPoint - data['cases'][date],
+          y: lastDataPoint - data[activeMeasure][date],
         });
       }
-      lastDataPoint = data['cases'][date];
+      lastDataPoint = data[activeMeasure][date];
     });
     return chartData;
   };
 
+  // get raw historical data on first load
   useEffect(() => {
     const getLineGraphData = async () => {
       const { data } = await covidAPI.getHistoricalData(60);
-      setChartData(transformDataForLineChart(data));
+      setRawHistoricalData(data);
     };
     getLineGraphData();
   }, []);
+
+  // transform & create chart data whenever active measure changes, or if raw historical data is loaded, but only if historical data exists
+  useEffect(() => {
+    if (rawHistoricalData) {
+      setChartData(transformDataForLineChart(rawHistoricalData));
+    }
+  }, [activeMeasure, rawHistoricalData]);
 
   const options = {
     legend: {
@@ -69,18 +80,19 @@ const LineGraph = () => {
   };
 
   return (
-    <div>
-      <Line
-        options={options}
-        data={{
-          datasets: [
-            {
-              data: chartData,
-            },
-          ],
-        }}
-      />
-    </div>
+    <Line
+      options={options}
+      data={{
+        datasets: [
+          {
+            fill: true,
+            borderColor: caseTypeMetadata[activeMeasure].border,
+            backgroundColor: caseTypeMetadata[activeMeasure].fill,
+            data: chartData,
+          },
+        ],
+      }}
+    />
   );
 };
 

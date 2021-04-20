@@ -1,6 +1,6 @@
-export const sortCountriesByCases = (data) => {
+export const sortCountriesByMeasure = (data, measure) => {
   const sortedData = data.sort((a, b) => {
-    if (a.cases < b.cases) return 1;
+    if (a[measure] < b[measure]) return 1;
     else return -1;
   });
   return sortedData;
