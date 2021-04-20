@@ -27,7 +27,7 @@ const SummaryBox = ({ title, todayStat, totalStat, isActive, ...props }) => {
           {title}
         </Typography>
         <Typography variant='h5' className={generateColorClass(title)}>
-          <strong>{numeral(todayStat).format('0,0.0 a')}</strong>
+          <strong>{numeral(todayStat).format('0,0')}</strong>
         </Typography>
         <Typography variant='body1' className='summaryBox__total'>
           {numeral(totalStat).format('0,0.0 a')}
