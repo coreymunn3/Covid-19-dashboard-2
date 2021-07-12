@@ -14,7 +14,7 @@ const LineGraph = ({ activeMeasure, selectedCountry }) => {
     const sortedDateKeys = sortDates(dateKeys);
     const chartData = [];
     let lastDataPoint;
-    sortedDateKeys.map((date) => {
+    sortedDateKeys.forEach((date) => {
       if (lastDataPoint) {
         chartData.push({
           x: date,
