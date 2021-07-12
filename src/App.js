@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import {
   FormControl,
   MenuItem,
@@ -88,27 +88,31 @@ const App = () => {
           </div>
         </div>
         <div className='app__stats'>
-          <SummaryBox
-            isActive={activeMeasure === 'cases'}
-            title='Cases'
-            totalStat={selectedCountryData?.cases}
-            todayStat={selectedCountryData?.todayCases}
-            onClick={() => setActiveMeasure('cases')}
-          ></SummaryBox>
-          <SummaryBox
-            isActive={activeMeasure === 'recovered'}
-            title='Recovered'
-            totalStat={selectedCountryData?.recovered}
-            todayStat={selectedCountryData?.todayRecovered}
-            onClick={() => setActiveMeasure('recovered')}
-          ></SummaryBox>
-          <SummaryBox
-            isActive={activeMeasure === 'deaths'}
-            title='Deaths'
-            totalStat={selectedCountryData?.deaths}
-            todayStat={selectedCountryData?.todayDeaths}
-            onClick={() => setActiveMeasure('deaths')}
-          ></SummaryBox>
+          {selectedCountryData && (
+            <Fragment>
+              <SummaryBox
+                isActive={activeMeasure === 'cases'}
+                title='Cases'
+                totalStat={selectedCountryData.cases}
+                todayStat={selectedCountryData.todayCases}
+                onClick={() => setActiveMeasure('cases')}
+              ></SummaryBox>
+              <SummaryBox
+                isActive={activeMeasure === 'recovered'}
+                title='Recovered'
+                totalStat={selectedCountryData.recovered}
+                todayStat={selectedCountryData.todayRecovered}
+                onClick={() => setActiveMeasure('recovered')}
+              ></SummaryBox>
+              <SummaryBox
+                isActive={activeMeasure === 'deaths'}
+                title='Deaths'
+                totalStat={selectedCountryData.deaths}
+                todayStat={selectedCountryData.todayDeaths}
+                onClick={() => setActiveMeasure('deaths')}
+              ></SummaryBox>
+            </Fragment>
+          )}
         </div>
 
         <Map
@@ -118,9 +122,10 @@ const App = () => {
           activeMeasure={activeMeasure}
         />
       </div>
+
       <div className='app__right'>
         <Paper
-          className='.app__right-content'
+          className='app__right-content'
           style={{ padding: '1rem', flexGrow: 1 }}
         >
           <Typography variant='h5' align='center'>
