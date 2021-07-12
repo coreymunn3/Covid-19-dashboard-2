@@ -138,7 +138,10 @@ const App = () => {
             style={{ marginTop: '1rem' }}
           >{`Worldwide New ${activeMeasure}`}</Typography>
           <div className='app__graph'>
-            <LineGraph activeMeasure={activeMeasure} />
+            <LineGraph
+              activeMeasure={activeMeasure}
+              selectedCountry={selectedCountry}
+            />
           </div>
         </Paper>
       </div>

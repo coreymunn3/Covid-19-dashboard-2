@@ -5,8 +5,8 @@ const covidAPI = {
   getCountries: () => axios.get(`${baseUrl}/countries`),
   getCountryData: (country) => axios.get(`${baseUrl}/countries/${country}`),
   getWorldwideData: () => axios.get(`${baseUrl}/all`),
-  getHistoricalData: (days) =>
-    axios.get(`${baseUrl}/historical/all?lastdays=${days}`),
+  getHistoricalData: (country, days) =>
+    axios.get(`${baseUrl}/historical/${country}?lastdays=${days}`),
 };
 
 export default covidAPI;

@@ -4,7 +4,7 @@ import covidAPI from '../../api';
 import { sortDates } from '../../utils/sort';
 import caseTypeMetadata from '../../utils/caseTypeMetadata';
 
-const LineGraph = ({ activeMeasure }) => {
+const LineGraph = ({ activeMeasure, selectedCountry }) => {
   const [rawHistoricalData, setRawHistoricalData] = useState(null);
   const [chartData, setChartData] = useState(null);
 
@@ -28,12 +28,22 @@ const LineGraph = ({ activeMeasure }) => {
 
   // get raw historical data on first load
   useEffect(() => {
-    const getLineGraphData = async () => {
-      const { data } = await covidAPI.getHistoricalData(60);
-      setRawHistoricalData(data);
+    const getLineGraphData = async (country) => {
+      if (country === 'worldwide') {
+        const { data } = await covidAPI.getHistoricalData('all', 90);
+        setRawHistoricalData(data);
+      } else {
+        const { data } = await covidAPI.getHistoricalData(country, 90);
+        setRawHistoricalData(data.timeline);
+      }
     };
-    getLineGraphData();
-  }, []);
+
+    getLineGraphData(selectedCountry);
+  }, [selectedCountry]);
+
+  console.log(rawHistoricalData);
+  console.log(chartData);
+  console.log(selectedCountry);
 
   // transform & create chart data whenever active measure changes, or if raw historical data is loaded, but only if historical data exists
   useEffect(() => {
