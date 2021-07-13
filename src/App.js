@@ -136,7 +136,11 @@ const App = () => {
             variant='h5'
             align='center'
             style={{ marginTop: '1rem' }}
-          >{`Worldwide New ${activeMeasure}`}</Typography>
+          >{`${
+            selectedCountry.charAt(0).toUpperCase() + selectedCountry.slice(1)
+          } New ${
+            activeMeasure.charAt(0).toUpperCase() + activeMeasure.slice(1)
+          }`}</Typography>
           <div className='app__graph'>
             <LineGraph
               activeMeasure={activeMeasure}
